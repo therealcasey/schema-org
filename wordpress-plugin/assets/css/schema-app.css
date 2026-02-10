@@ -1,0 +1,242 @@
+/* Schema.org Generator – Front-end Styles */
+
+.sog-app {
+    max-width: 720px;
+    margin: 2rem auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    font-size: 15px;
+    color: #1e1e1e;
+}
+
+/* Sections */
+.sog-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.sog-section h3 {
+    margin: 0 0 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.sog-description {
+    margin: 0 0 1rem;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Inputs */
+.sog-input {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.95rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    box-sizing: border-box;
+    transition: border-color 0.15s;
+}
+
+.sog-input:focus {
+    outline: none;
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+}
+
+textarea.sog-input {
+    resize: vertical;
+    min-height: 2.5rem;
+}
+
+select.sog-input {
+    cursor: pointer;
+}
+
+/* Field rows */
+.sog-field-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.sog-field-row .sog-input {
+    flex: 1;
+}
+
+.sog-field-group {
+    margin-bottom: 1rem;
+}
+
+.sog-field-group label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Property rows */
+.sog-properties {
+    margin-bottom: 1rem;
+}
+
+.sog-prop-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+}
+
+.sog-prop-row .sog-prop-key {
+    flex: 0 0 180px;
+}
+
+.sog-prop-row .sog-prop-value {
+    flex: 1;
+}
+
+/* Buttons */
+.sog-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.15s, border-color 0.15s;
+}
+
+.sog-btn-primary {
+    background: #2271b1;
+    color: #fff;
+    border-color: #2271b1;
+}
+
+.sog-btn-primary:hover {
+    background: #135e96;
+}
+
+.sog-btn-secondary {
+    background: #f0f0f0;
+    color: #1e1e1e;
+    border-color: #ccc;
+}
+
+.sog-btn-secondary:hover {
+    background: #e2e2e2;
+}
+
+.sog-btn-danger {
+    background: #d63638;
+    color: #fff;
+    border-color: #d63638;
+}
+
+.sog-btn-danger:hover {
+    background: #b32d2e;
+}
+
+.sog-btn-sm {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+}
+
+/* Actions row */
+.sog-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+/* Status messages */
+.sog-status {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    min-height: 1.2em;
+}
+
+.sog-status-success {
+    color: #00a32a;
+}
+
+.sog-status-error {
+    color: #d63638;
+}
+
+/* Loading */
+.sog-loading {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    color: #666;
+}
+
+.sog-spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid #ddd;
+    border-top-color: #2271b1;
+    border-radius: 50%;
+    animation: sog-spin 0.8s linear infinite;
+}
+
+@keyframes sog-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Preview */
+.sog-preview {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 1rem;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.sog-preview code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    white-space: pre;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .sog-app {
+        margin: 1rem;
+    }
+
+    .sog-field-row {
+        flex-direction: column;
+    }
+
+    .sog-prop-row {
+        flex-direction: column;
+    }
+
+    .sog-prop-row .sog-prop-key {
+        flex: auto;
+    }
+
+    .sog-actions {
+        flex-direction: column;
+    }
+}
