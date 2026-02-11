@@ -139,7 +139,8 @@ class Ajax
 
         $xpath = new \DOMXPath($dom);
 
-        // Meta tags (standard + Open Graph).
+        // ── Meta tags (standard + Open Graph) ─────────────────────────────
+
         $metas = $xpath->query('//meta[@name or @property]');
         $meta_lines = [];
         foreach ($metas as $meta) {
@@ -157,7 +158,8 @@ class Ajax
 
         $metatags = implode("\n", $meta_lines);
 
-        // Existing JSON-LD on the page.
+        // ── Existing JSON-LD on the page ──────────────────────────────────
+
         $json_ld_scripts = $xpath->query('//script[@type="application/ld+json"]');
         $existing_schemas = [];
         foreach ($json_ld_scripts as $script) {
@@ -167,17 +169,79 @@ class Ajax
             $metatags .= "\n\nExisting JSON-LD on page:\n" . implode("\n", $existing_schemas);
         }
 
-        // Body text — strip non-content tags first.
-        $remove_tags = $xpath->query('//script | //style | //noscript | //iframe');
-        foreach ($remove_tags as $tag) {
-            $tag->parentNode->removeChild($tag);
+        // ── Strip non-content nodes from the DOM ──────────────────────────
+
+        $noise_xpath = implode(' | ', [
+            '//script',
+            '//style',
+            '//noscript',
+            '//iframe',
+            '//svg',
+            '//nav',
+            '//header',
+            '//footer',
+            '//*[contains(@class,"nav")]',
+            '//*[contains(@class,"menu")]',
+            '//*[contains(@class,"sidebar")]',
+            '//*[contains(@class,"footer")]',
+            '//*[contains(@class,"header")]',
+            '//*[contains(@class,"cookie")]',
+            '//*[contains(@class,"banner")]',
+            '//*[contains(@class,"breadcrumb")]',
+            '//*[contains(@id,"nav")]',
+            '//*[contains(@id,"menu")]',
+            '//*[contains(@id,"sidebar")]',
+            '//*[contains(@id,"footer")]',
+            '//*[contains(@id,"header")]',
+            '//*[contains(@id,"cookie")]',
+            '//*[@role="navigation"]',
+            '//*[@role="banner"]',
+            '//*[@role="contentinfo"]',
+            '//*[@role="complementary"]',
+        ]);
+
+        $noise_nodes = $xpath->query($noise_xpath);
+        foreach ($noise_nodes as $node) {
+            $node->parentNode?->removeChild($node);
         }
 
+        // ── Extract primary content region ────────────────────────────────
+        // Prefer <main>, <article>, or [role="main"]. Fall back to <body>.
+
         $content = '';
-        $body = $xpath->query('//body');
-        if ($body->length > 0) {
-            $content = $body->item(0)->textContent;
+        $primary_queries = [
+            '//main',
+            '//article',
+            '//*[@role="main"]',
+            '//*[contains(@class,"content")]',
+            '//*[contains(@id,"content")]',
+        ];
+
+        foreach ($primary_queries as $query) {
+            $nodes = $xpath->query($query);
+            if ($nodes->length > 0) {
+                // If multiple <article> elements, concatenate them.
+                $parts = [];
+                foreach ($nodes as $node) {
+                    $text = trim($node->textContent);
+                    if ($text !== '') {
+                        $parts[] = $text;
+                    }
+                }
+                $content = implode("\n\n", $parts);
+                break;
+            }
         }
+
+        // Fall back to full <body> if no primary region found.
+        if ($content === '') {
+            $body = $xpath->query('//body');
+            if ($body->length > 0) {
+                $content = $body->item(0)->textContent;
+            }
+        }
+
+        // ── Clean whitespace and truncate ─────────────────────────────────
 
         $content = preg_replace('/[ \t]+/', ' ', $content);
         $content = preg_replace('/\n{3,}/', "\n\n", $content);
