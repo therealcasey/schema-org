@@ -15,10 +15,7 @@ define('SOG_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('SOG_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('SOG_VERSION', '1.0.0');
 
-require_once SOG_PLUGIN_DIR . 'includes/Admin/SettingsPage.php';
-require_once SOG_PLUGIN_DIR . 'includes/Shortcode.php';
-require_once SOG_PLUGIN_DIR . 'includes/Ajax.php';
-require_once SOG_PLUGIN_DIR . 'includes/Output.php';
+require_once SOG_PLUGIN_DIR . 'includes/autoload.php';
 
 function sog_activate() {
     $default_prompt = sog_get_default_prompt();
