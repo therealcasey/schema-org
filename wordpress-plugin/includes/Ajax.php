@@ -158,19 +158,64 @@ class Ajax
 
         $metatags = implode("\n", $meta_lines);
 
-        // ── Existing JSON-LD on the page ──────────────────────────────────
+        // ── Existing structured data on the page ─────────────────────────
 
+        $existing_schema_lines = [];
+
+        // JSON-LD blocks.
         $json_ld_scripts = $xpath->query('//script[@type="application/ld+json"]');
-        $existing_schemas = [];
         foreach ($json_ld_scripts as $script) {
-            $existing_schemas[] = trim($script->textContent);
+            $text = trim($script->textContent);
+            if ($text !== '') {
+                $existing_schema_lines[] = "[JSON-LD]\n$text";
+            }
         }
-        if ($existing_schemas !== []) {
-            $metatags .= "\n\nExisting JSON-LD on page:\n" . implode("\n", $existing_schemas);
+
+        // Microdata: elements with itemscope + itemtype.
+        $microdata = $xpath->query('//*[@itemscope and @itemtype]');
+        foreach ($microdata as $node) {
+            $type = $node->getAttribute('itemtype');
+            $props = [];
+            $prop_nodes = $xpath->query('.//*[@itemprop]', $node);
+            foreach ($prop_nodes as $prop) {
+                $name = $prop->getAttribute('itemprop');
+                $val = $prop->getAttribute('content')
+                    ?: $prop->getAttribute('href')
+                    ?: $prop->getAttribute('src')
+                    ?: trim($prop->textContent);
+                if ($name !== '' && $val !== '') {
+                    $props[] = "  $name: $val";
+                }
+            }
+            $existing_schema_lines[] = "[Microdata] $type\n" . implode("\n", $props);
+        }
+
+        // RDFa: elements with typeof + vocab or resource.
+        $rdfa = $xpath->query('//*[@typeof and (@vocab or @resource or @about)]');
+        foreach ($rdfa as $node) {
+            $type = $node->getAttribute('typeof');
+            $vocab = $node->getAttribute('vocab');
+            $props = [];
+            $prop_nodes = $xpath->query('.//*[@property]', $node);
+            foreach ($prop_nodes as $prop) {
+                $name = $prop->getAttribute('property');
+                $val = $prop->getAttribute('content') ?: trim($prop->textContent);
+                if ($name !== '' && $val !== '') {
+                    $props[] = "  $name: $val";
+                }
+            }
+            $label = $vocab ? "$vocab$type" : $type;
+            $existing_schema_lines[] = "[RDFa] $label\n" . implode("\n", $props);
+        }
+
+        if ($existing_schema_lines !== []) {
+            $metatags .= "\n\nExisting structured data found on page:\n" . implode("\n\n", $existing_schema_lines);
         }
 
         // ── Strip non-content nodes from the DOM ──────────────────────────
 
+        // Keep <footer> — it often contains address, phone, hours data
+        // that is valuable for LocalBusiness / Organization schema.
         $noise_xpath = implode(' | ', [
             '//script',
             '//style',
@@ -179,11 +224,9 @@ class Ajax
             '//svg',
             '//nav',
             '//header',
-            '//footer',
             '//*[contains(@class,"nav")]',
             '//*[contains(@class,"menu")]',
             '//*[contains(@class,"sidebar")]',
-            '//*[contains(@class,"footer")]',
             '//*[contains(@class,"header")]',
             '//*[contains(@class,"cookie")]',
             '//*[contains(@class,"banner")]',
@@ -191,12 +234,10 @@ class Ajax
             '//*[contains(@id,"nav")]',
             '//*[contains(@id,"menu")]',
             '//*[contains(@id,"sidebar")]',
-            '//*[contains(@id,"footer")]',
             '//*[contains(@id,"header")]',
             '//*[contains(@id,"cookie")]',
             '//*[@role="navigation"]',
             '//*[@role="banner"]',
-            '//*[@role="contentinfo"]',
             '//*[@role="complementary"]',
         ]);
 
@@ -220,7 +261,6 @@ class Ajax
         foreach ($primary_queries as $query) {
             $nodes = $xpath->query($query);
             if ($nodes->length > 0) {
-                // If multiple <article> elements, concatenate them.
                 $parts = [];
                 foreach ($nodes as $node) {
                     $text = trim($node->textContent);
@@ -238,6 +278,21 @@ class Ajax
             $body = $xpath->query('//body');
             if ($body->length > 0) {
                 $content = $body->item(0)->textContent;
+            }
+        }
+
+        // Append footer text — often contains address, phone, hours.
+        $footer = $xpath->query('//footer | //*[@role="contentinfo"]');
+        if ($footer->length > 0) {
+            $footer_parts = [];
+            foreach ($footer as $node) {
+                $text = trim($node->textContent);
+                if ($text !== '') {
+                    $footer_parts[] = $text;
+                }
+            }
+            if ($footer_parts !== []) {
+                $content .= "\n\n[Footer]\n" . implode("\n", $footer_parts);
             }
         }
 
