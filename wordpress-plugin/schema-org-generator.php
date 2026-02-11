@@ -1,10 +1,17 @@
 <?php
 /**
- * Plugin Name: Schema.org Generator
- * Description: Auto-generate Schema.org JSON-LD structured data from any URL using AI via OpenRouter.
- * Version: 1.0.0
- * Requires PHP: 8.0
- * License: MIT
+ * Plugin Name:       Schema.org Generator
+ * Plugin URI:        https://github.com/therealcasey/schema-org
+ * Description:       Auto-generate Schema.org JSON-LD structured data from any URL using AI via OpenRouter.
+ * Version:           1.0.0
+ * Requires at least: 6.0
+ * Requires PHP:      8.0
+ * Author:            therealcasey
+ * Author URI:        https://github.com/therealcasey
+ * License:           MIT
+ * License URI:       https://opensource.org/licenses/MIT
+ * Text Domain:       schema-org-generator
+ * Domain Path:       /languages
  */
 
 if (! defined('ABSPATH')) {
@@ -17,13 +24,20 @@ define('SOG_VERSION', '1.0.0');
 
 require_once SOG_PLUGIN_DIR . 'includes/autoload.php';
 
-function sog_activate() {
+function sog_activate(): void {
     $default_prompt = sog_get_default_prompt();
     if (get_option('sog_system_prompt') === false) {
         add_option('sog_system_prompt', $default_prompt);
     }
 }
 register_activation_hook(__FILE__, 'sog_activate');
+
+function sog_deactivate(): void {
+    // Flush rewrite rules on deactivation in case shortcode pages
+    // registered custom endpoints in the future.
+    flush_rewrite_rules();
+}
+register_deactivation_hook(__FILE__, 'sog_deactivate');
 
 function sog_get_default_prompt(): string {
     return <<<'PROMPT'
