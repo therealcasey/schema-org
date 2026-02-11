@@ -4,10 +4,10 @@
  * Plugin URI:        https://github.com/therealcasey/schema-org
  * Description:       Auto-generate Schema.org JSON-LD structured data from any URL using AI via OpenRouter.
  * Version:           1.0.0
- * Requires at least: 6.0
- * Requires PHP:      8.0
- * Author:            therealcasey
- * Author URI:        https://github.com/therealcasey
+ * Requires at least: 6.9
+ * Requires PHP:      8.2
+ * Author:            PirateSERP
+ * Author URI:        https://pirateserp.com
  * License:           MIT
  * License URI:       https://opensource.org/licenses/MIT
  * Text Domain:       schema-org-generator

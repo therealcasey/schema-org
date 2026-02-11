@@ -16,8 +16,12 @@ class Shortcode
 
     public static function enqueueAssets(): void
     {
+        if (! is_singular()) {
+            return;
+        }
+
         global $post;
-        if (! is_a($post, 'WP_Post') || ! has_shortcode($post->post_content, 'schema_generator')) {
+        if (! $post instanceof \WP_Post || ! has_shortcode($post->post_content, 'schema_generator')) {
             return;
         }
 
@@ -25,7 +29,7 @@ class Shortcode
             'sog-schema-app',
             SOG_PLUGIN_URL . 'assets/css/schema-app.css',
             [],
-            SOG_VERSION
+            SOG_VERSION,
         );
 
         wp_enqueue_script(
@@ -33,7 +37,7 @@ class Shortcode
             SOG_PLUGIN_URL . 'assets/js/schema-app.js',
             [],
             SOG_VERSION,
-            true
+            true,
         );
 
         wp_localize_script('sog-schema-app', 'sogConfig', [
@@ -43,11 +47,15 @@ class Shortcode
         ]);
     }
 
-    public static function render(array $atts = []): string
+    /**
+     * @param array<string, string>|string $atts Shortcode attributes.
+     */
+    public static function render(array|string $atts = []): string
     {
         ob_start();
         require SOG_PLUGIN_DIR . 'templates/schema-form.php';
-        return ob_get_clean();
+
+        return (string) ob_get_clean();
     }
 
     private static function userHasApiKey(): bool
@@ -55,7 +63,9 @@ class Shortcode
         if (! is_user_logged_in()) {
             return false;
         }
+
         $key = get_user_meta(get_current_user_id(), 'sog_openrouter_api_key', true);
-        return ! empty($key);
+
+        return $key !== '' && $key !== false;
     }
 }

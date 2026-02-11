@@ -1,6 +1,8 @@
-/* Schema.org Generator – Front-end Styles */
+/* Schema.org Generator – BEM Styles */
 
-.sog-app {
+/* ── Block: sog ────────────────────────────────────────────────────────── */
+
+.sog {
     max-width: 720px;
     margin: 2rem auto;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
@@ -9,8 +11,7 @@
     color: #1e1e1e;
 }
 
-/* Sections */
-.sog-section {
+.sog__section {
     margin-bottom: 2rem;
     padding: 1.5rem;
     background: #fff;
@@ -18,20 +19,19 @@
     border-radius: 8px;
 }
 
-.sog-section h3 {
+.sog__title {
     margin: 0 0 0.75rem;
     font-size: 1.1rem;
     font-weight: 600;
 }
 
-.sog-description {
+.sog__description {
     margin: 0 0 1rem;
     color: #666;
     font-size: 0.9rem;
 }
 
-/* Inputs */
-.sog-input {
+.sog__input {
     display: block;
     width: 100%;
     padding: 0.5rem 0.75rem;
@@ -43,64 +43,71 @@
     transition: border-color 0.15s;
 }
 
-.sog-input:focus {
+.sog__input:focus {
     outline: none;
     border-color: #2271b1;
     box-shadow: 0 0 0 1px #2271b1;
 }
 
-textarea.sog-input {
+textarea.sog__input {
     resize: vertical;
     min-height: 2.5rem;
 }
 
-select.sog-input {
+select.sog__input {
     cursor: pointer;
 }
 
-/* Field rows */
-.sog-field-row {
+.sog__field {
     display: flex;
     gap: 0.5rem;
     align-items: center;
 }
 
-.sog-field-row .sog-input {
+.sog__field .sog__input {
     flex: 1;
 }
 
-.sog-field-group {
+.sog__group {
     margin-bottom: 1rem;
 }
 
-.sog-field-group label {
+.sog__label {
     display: block;
     margin-bottom: 0.25rem;
     font-weight: 600;
     font-size: 0.9rem;
 }
 
-/* Property rows */
-.sog-properties {
+.sog__properties {
     margin-bottom: 1rem;
 }
 
-.sog-prop-row {
+.sog__actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+/* ── Block: sog-prop ───────────────────────────────────────────────────── */
+
+.sog-prop {
     display: flex;
     gap: 0.5rem;
     align-items: flex-start;
     margin-bottom: 0.5rem;
 }
 
-.sog-prop-row .sog-prop-key {
+.sog-prop__key {
     flex: 0 0 180px;
 }
 
-.sog-prop-row .sog-prop-value {
+.sog-prop__value {
     flex: 1;
 }
 
-/* Buttons */
+/* ── Block: sog-btn ────────────────────────────────────────────────────── */
+
 .sog-btn {
     display: inline-flex;
     align-items: center;
@@ -115,64 +122,59 @@ select.sog-input {
     transition: background-color 0.15s, border-color 0.15s;
 }
 
-.sog-btn-primary {
+.sog-btn--primary {
     background: #2271b1;
     color: #fff;
     border-color: #2271b1;
 }
 
-.sog-btn-primary:hover {
+.sog-btn--primary:hover {
     background: #135e96;
 }
 
-.sog-btn-secondary {
+.sog-btn--secondary {
     background: #f0f0f0;
     color: #1e1e1e;
     border-color: #ccc;
 }
 
-.sog-btn-secondary:hover {
+.sog-btn--secondary:hover {
     background: #e2e2e2;
 }
 
-.sog-btn-danger {
+.sog-btn--danger {
     background: #d63638;
     color: #fff;
     border-color: #d63638;
 }
 
-.sog-btn-danger:hover {
+.sog-btn--danger:hover {
     background: #b32d2e;
 }
 
-.sog-btn-sm {
+.sog-btn--sm {
     padding: 0.3rem 0.6rem;
     font-size: 0.8rem;
 }
 
-/* Actions row */
-.sog-actions {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 1rem;
-}
+/* ── Block: sog-status ─────────────────────────────────────────────────── */
 
-/* Status messages */
 .sog-status {
     margin-top: 0.5rem;
     font-size: 0.9rem;
     min-height: 1.2em;
 }
 
-.sog-status-success {
+.sog-status--success {
     color: #00a32a;
 }
 
-.sog-status-error {
+.sog-status--error {
     color: #d63638;
 }
 
-/* Loading */
+/* ── Block: sog-loading ────────────────────────────────────────────────── */
+
 .sog-loading {
     display: flex;
     align-items: center;
@@ -185,7 +187,7 @@ select.sog-input {
     color: #666;
 }
 
-.sog-spinner {
+.sog-loading__spinner {
     width: 24px;
     height: 24px;
     border: 3px solid #ddd;
@@ -194,13 +196,18 @@ select.sog-input {
     animation: sog-spin 0.8s linear infinite;
 }
 
+.sog-loading__text {
+    font-size: 0.95rem;
+}
+
 @keyframes sog-spin {
     to {
         transform: rotate(360deg);
     }
 }
 
-/* Preview */
+/* ── Block: sog-preview ────────────────────────────────────────────────── */
+
 .sog-preview {
     background: #1e1e1e;
     color: #d4d4d4;
@@ -213,30 +220,31 @@ select.sog-input {
     overflow-y: auto;
 }
 
-.sog-preview code {
+.sog-preview__code {
     font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
     white-space: pre;
 }
 
-/* Responsive */
+/* ── Responsive ────────────────────────────────────────────────────────── */
+
 @media (max-width: 600px) {
-    .sog-app {
+    .sog {
         margin: 1rem;
     }
 
-    .sog-field-row {
+    .sog__field {
         flex-direction: column;
     }
 
-    .sog-prop-row {
+    .sog-prop {
         flex-direction: column;
     }
 
-    .sog-prop-row .sog-prop-key {
+    .sog-prop__key {
         flex: auto;
     }
 
-    .sog-actions {
+    .sog__actions {
         flex-direction: column;
     }
 }

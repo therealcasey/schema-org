@@ -10,12 +10,11 @@ spl_autoload_register(function (string $class): void {
     $prefix = 'Sog\\';
     $base_dir = __DIR__ . '/';
 
-    $len = strlen($prefix);
-    if (strncmp($prefix, $class, $len) !== 0) {
+    if (! str_starts_with($class, $prefix)) {
         return;
     }
 
-    $relative_class = substr($class, $len);
+    $relative_class = substr($class, strlen($prefix));
     $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
 
     if (file_exists($file)) {

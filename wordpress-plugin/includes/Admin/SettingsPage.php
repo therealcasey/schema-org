@@ -41,7 +41,7 @@ class SettingsPage
         // Ensure the prompt still contains the required placeholders.
         $required = ['{{content}}'];
         foreach ($required as $placeholder) {
-            if (strpos($value, $placeholder) === false) {
+            if (! str_contains($value, $placeholder)) {
                 add_settings_error(
                     'sog_system_prompt',
                     'missing_placeholder',

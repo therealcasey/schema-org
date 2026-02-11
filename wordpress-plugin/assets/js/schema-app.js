@@ -1,12 +1,6 @@
 (function () {
     'use strict';
 
-    /** @type {string|null} */
-    let currentType = null;
-
-    /** @type {Object<string, string>} */
-    let currentProperties = {};
-
     // ── Helpers ────────────────────────────────────────────────────────────
 
     function $(selector) {
@@ -27,7 +21,7 @@
         var el = $(selector);
         if (!el) return;
         el.textContent = message;
-        el.className = 'sog-status' + (isError ? ' sog-status-error' : ' sog-status-success');
+        el.className = 'sog-status' + (isError ? ' sog-status--error' : ' sog-status--success');
     }
 
     function clearStatus(selector) {
@@ -42,7 +36,7 @@
         formData.append('action', action);
         formData.append('nonce', sogConfig.nonce);
         for (var key in data) {
-            if (data.hasOwnProperty(key)) {
+            if (Object.prototype.hasOwnProperty.call(data, key)) {
                 formData.append(key, data[key]);
             }
         }
@@ -66,8 +60,7 @@
         };
 
         for (var key in props) {
-            if (props.hasOwnProperty(key) && props[key] !== '') {
-                // Try to parse nested JSON objects (e.g. address).
+            if (Object.prototype.hasOwnProperty.call(props, key) && props[key] !== '') {
                 try {
                     var parsed = JSON.parse(props[key]);
                     if (typeof parsed === 'object') {
@@ -86,7 +79,7 @@
 
     function updatePreview() {
         var schema = buildJsonLd();
-        var previewEl = $('#sog-preview code');
+        var previewEl = $('.sog-preview__code');
         if (!schema || !previewEl) {
             if (previewEl) previewEl.textContent = '';
             return;
@@ -98,10 +91,10 @@
 
     function collectPropertiesFromForm() {
         var props = {};
-        var rows = document.querySelectorAll('.sog-prop-row');
+        var rows = document.querySelectorAll('.sog-prop');
         for (var i = 0; i < rows.length; i++) {
-            var keyInput = rows[i].querySelector('.sog-prop-key');
-            var valInput = rows[i].querySelector('.sog-prop-value');
+            var keyInput = rows[i].querySelector('.sog-prop__key');
+            var valInput = rows[i].querySelector('.sog-prop__value');
             if (keyInput && valInput && keyInput.value.trim()) {
                 props[keyInput.value.trim()] = valInput.value;
             }
@@ -115,9 +108,8 @@
         container.innerHTML = '';
 
         for (var key in properties) {
-            if (properties.hasOwnProperty(key)) {
+            if (Object.prototype.hasOwnProperty.call(properties, key)) {
                 var val = properties[key];
-                // Convert nested objects to JSON string for editing.
                 if (typeof val === 'object' && val !== null) {
                     val = JSON.stringify(val, null, 2);
                 }
@@ -128,23 +120,23 @@
 
     function addPropertyRow(container, key, value) {
         var row = document.createElement('div');
-        row.className = 'sog-prop-row';
+        row.className = 'sog-prop';
 
         var keyInput = document.createElement('input');
         keyInput.type = 'text';
-        keyInput.className = 'sog-input sog-prop-key';
+        keyInput.className = 'sog__input sog-prop__key';
         keyInput.placeholder = 'Property name';
         keyInput.value = key || '';
 
         var valInput = document.createElement('textarea');
-        valInput.className = 'sog-input sog-prop-value';
+        valInput.className = 'sog__input sog-prop__value';
         valInput.placeholder = 'Value';
         valInput.value = value || '';
         valInput.rows = (typeof value === 'string' && value.indexOf('\n') !== -1) ? 4 : 1;
 
         var removeBtn = document.createElement('button');
         removeBtn.type = 'button';
-        removeBtn.className = 'sog-btn sog-btn-danger sog-btn-sm';
+        removeBtn.className = 'sog-btn sog-btn--danger sog-btn--sm';
         removeBtn.textContent = 'Remove';
         removeBtn.addEventListener('click', function () {
             row.remove();
@@ -200,10 +192,8 @@
             hide('#sog-loading');
             if (resp.success) {
                 var data = resp.data;
-                // Set type dropdown.
                 var typeSelect = $('#sog-schema-type');
                 if (typeSelect) {
-                    // Add the type as an option if it doesn't exist.
                     var found = false;
                     for (var i = 0; i < typeSelect.options.length; i++) {
                         if (typeSelect.options[i].value === data.type) {
@@ -220,8 +210,6 @@
                     typeSelect.value = data.type;
                 }
 
-                currentType = data.type;
-                currentProperties = data.properties;
                 renderProperties(data.properties);
                 updatePreview();
                 show('#sog-results');
@@ -251,13 +239,11 @@
         }
         var jsonLd = JSON.stringify(schema);
 
-        // Get current post ID from body classes (WordPress convention).
         var postId = 0;
         var match = document.body.className.match(/(?:^|\s)postid-(\d+)/);
         if (match) {
             postId = match[1];
         }
-        // Also check page-id pattern.
         if (!postId) {
             match = document.body.className.match(/(?:^|\s)page-id-(\d+)/);
             if (match) postId = match[1];
@@ -302,7 +288,6 @@
             });
         }
 
-        // Allow Enter key in URL field to trigger generate.
         var urlInput = $('#sog-url');
         if (urlInput) {
             urlInput.addEventListener('keydown', function (e) {
